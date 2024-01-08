@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS users, events, categories, locations;
 
 CREATE TABLE IF NOT EXISTS users(
 id INTEGER GENERATED ALWAYS AS IDENTITY,
-name VARCHAR(100) NOT NULL,
-email VARCHAR(100) NOT NULL,
+name VARCHAR(250) NOT NULL,
+email VARCHAR(254) NOT NULL,
 CONSTRAINT user_id PRIMARY KEY(id),
 CONSTRAINT user_email UNIQUE (email)
 );
@@ -24,14 +24,14 @@ CONSTRAINT location_id PRIMARY KEY(id)
 
 CREATE TABLE IF NOT EXISTS events(
 id INTEGER GENERATED ALWAYS AS IDENTITY,
-annotation VARCHAR(1000),
+annotation VARCHAR(2000),
 category_id INTEGER REFERENCES categories(id),
-description VARCHAR(1000),
+description VARCHAR(7000),
 eventDate TIMESTAMP WITHOUT TIME ZONE,
 location_id INTEGER REFERENCES locations(id),
 paid BOOLEAN,
 participantLimit INTEGER,
 requestModeration BOOLEAN,
-title VARCHAR(100),
+title VARCHAR(120),
 CONSTRAINT events_id PRIMARY KEY(id)
 );
