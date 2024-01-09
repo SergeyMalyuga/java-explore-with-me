@@ -22,10 +22,10 @@ public class UserDto {
     private int id;
     @NotNull(message = "The \"name\" field cannot be empty.")
     @NotBlank(message = "The \"name\" field cannot be empty.")
-    @Size(message = "Min value 2 / Max value 250", min = 2, max = 250)
+    @Size(message = "Value: Min 2 / Max value 250", min = 2, max = 250)
     private String name;
     @Email(message = "Invalid email format")
     @NotBlank(message = "The \"email\" field cannot be empty.")
-    @Size(message = "Min value 6 - Max 254", min = 6, max = 254)
+    @Size(message = "Value: Min 6 - Max 254", min = 6, max = 254)
     private String email;
 }

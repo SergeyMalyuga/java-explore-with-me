@@ -20,24 +20,37 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "annotation")
+    @Column(name = "annotation", nullable = false)
     private String annotation;
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
     @Column(name = "description")
     private String description;
-    @Column(name = "event_date")
+    @Column(name = "event_date", nullable = false)
     private LocalDateTime eventDate;
     @ManyToOne
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", nullable = false)
     private Location location;
-    @Column(name = "paid")
+    @Column(name = "paid", nullable = false)
     private boolean paid;
     @Column(name = "participant_limit")
     private int participantLimit;
     @Column(name = "request_moderation")
     private boolean requestModeration;
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
+    @Transient //TODO дописать заполнение поля из таблицы Requests
+    private int confirmedRequests;
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "initiator_id", nullable = false)
+    private User initiator;
+    @Column(name = "published_on")
+    private LocalDateTime publishedOn;
+    @Enumerated(EnumType.STRING)
+    private EventState state;
+    @Transient
+    private int views;
 }

@@ -36,13 +36,9 @@ public class UserServiceImp implements UserService {
     @Override
     public List<UserDto> getUsers(List<Integer> uid, Optional<Integer> from, Optional<Integer> size) {
         if (uid != null) {
-            return userRepository.findAllUsers(uid).stream().map(e -> userMapper.convertToUserDto(e))
-                    .collect(Collectors.toList());
-        } else if (from.isPresent() && size.isPresent()) { //TODO проверка в контроллере на positive or zero
-            return userRepository.findAllUsersWithPagination(PageRequest.of(
-                            (int) Math.ceil((double) from.get() / size.get()),
-                            size.get())).getContent().stream().map(e -> userMapper.convertToUserDto(e))
-                    .collect(Collectors.toList());
+            return getUsersWithUidParam(uid);
+        } else if (from.isPresent() && size.isPresent()) {
+            return getUsersWithFromSizeParam(from, size);
         }
         return new ArrayList<>();
     }
@@ -50,5 +46,17 @@ public class UserServiceImp implements UserService {
     private void checkTheExistenceUser(int userId) {
         userRepository.findById(userId).orElseThrow(() -> new NoDataFoundException("User with " + userId
                 + " was not found"));
+    }
+
+    private List<UserDto> getUsersWithUidParam(List<Integer> uid) {
+        return userRepository.findAllUsers(uid).stream().map(e -> userMapper.convertToUserDto(e))
+                .collect(Collectors.toList());
+    }
+
+    private List<UserDto> getUsersWithFromSizeParam(Optional<Integer> from, Optional<Integer> size) {
+        return userRepository.findAllUsersWithPagination(PageRequest.of(
+                        (int) Math.ceil((double) from.get() / size.get()),
+                        size.get())).getContent().stream().map(e -> userMapper.convertToUserDto(e))
+                .collect(Collectors.toList());
     }
 }

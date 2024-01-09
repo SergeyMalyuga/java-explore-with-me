@@ -1,19 +1,19 @@
 package ru.practicum.exploreWithMe.exception;
 
+import java.time.LocalDateTime;
+
 public class ErrorResponse {
-    private String error;
-    private String description;
+    private StackTraceElement[] errors;
+    private String message;
+    private String reason;
+    private String status;
+    private LocalDateTime timestamp;
 
-    public ErrorResponse(String error, String description) {
-        this.error = error;
-        this.description = description;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public String getDescription() {
-        return description;
+    public ErrorResponse(StackTraceElement[] errors, String message, String reason, String status, LocalDateTime timestamp) {
+        this.errors = errors;
+        this.message = message;
+        this.reason = reason;
+        this.status = status;
+        this.timestamp = timestamp;
     }
 }

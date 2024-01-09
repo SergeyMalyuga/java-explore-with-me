@@ -24,14 +24,18 @@ CONSTRAINT location_id PRIMARY KEY(id)
 
 CREATE TABLE IF NOT EXISTS events(
 id INTEGER GENERATED ALWAYS AS IDENTITY,
-annotation VARCHAR(2000),
-category_id INTEGER REFERENCES categories(id),
+annotation VARCHAR(2000) NOT NULL,
+category_id INTEGER NOT NULL REFERENCES categories(id),
 description VARCHAR(7000),
-eventDate TIMESTAMP WITHOUT TIME ZONE,
-location_id INTEGER REFERENCES locations(id),
-paid BOOLEAN,
-participantLimit INTEGER,
-requestModeration BOOLEAN,
-title VARCHAR(120),
+event_date TIMESTAMP WITHOUT TIME ZONE  NOT NULL ,
+location_id INTEGER  NOT NULL  REFERENCES locations(id),
+paid BOOLEAN  NOT NULL ,
+participant_limit INTEGER DEFAULT 0,
+request_moderation BOOLEAN DEFAULT TRUE,
+title VARCHAR(120)  NOT NULL,
+created_on TIMESTAMP WITHOUT TIME ZONE,
+initiator_id INTEGER NOT NULL  REFERENCES users(id),
+published_on TIMESTAMP WITHOUT TIME ZONE,
+state VARCHAR(10),
 CONSTRAINT events_id PRIMARY KEY(id)
 );
