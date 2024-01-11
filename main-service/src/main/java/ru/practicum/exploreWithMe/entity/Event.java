@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,10 +38,10 @@ public class Event {
     @Column(name = "participant_limit")
     private int participantLimit;
     @Column(name = "request_moderation")
-    private boolean requestModeration;
+    private Boolean requestModeration;
     @Column(name = "title", nullable = false)
     private String title;
-    @Transient //TODO дописать заполнение поля из таблицы Requests
+    @Formula(value = "(SELECT COUNT(r.id) FROM requests AS r WHERE r.event_id = id AND r.request_status LIKE 'CONFIRMED')")
     private int confirmedRequests;
     @Column(name = "created_on")
     private LocalDateTime createdOn;

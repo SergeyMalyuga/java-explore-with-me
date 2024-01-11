@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.dao.UserRepository;
+import ru.practicum.exploreWithMe.dto.CategoryDto;
 import ru.practicum.exploreWithMe.dto.UserDto;
 import ru.practicum.exploreWithMe.exception.NoDataFoundException;
+import ru.practicum.exploreWithMe.exception.RequestException;
 import ru.practicum.exploreWithMe.mapper.UserMapper;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDto addUser(UserDto userDto) {
+        checkAvailableEmail(userDto);
         return userMapper.convertToUserDto(userRepository.save(userMapper.convertToUser(userDto)));
     }
 
@@ -58,5 +61,11 @@ public class UserServiceImp implements UserService {
                         (int) Math.ceil((double) from.get() / size.get()),
                         size.get())).getContent().stream().map(e -> userMapper.convertToUserDto(e))
                 .collect(Collectors.toList());
+    }
+
+    private void checkAvailableEmail(UserDto userDto) {
+        if (userRepository.findByEmail(userDto.getEmail()) != null) {
+            throw new RequestException("Email is already exists.");
+        }
     }
 }

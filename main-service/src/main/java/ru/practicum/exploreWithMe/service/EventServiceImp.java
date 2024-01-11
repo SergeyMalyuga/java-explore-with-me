@@ -3,25 +3,18 @@ package ru.practicum.exploreWithMe.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.practicum.exploreWithMe.dao.CategoryRepository;
-import ru.practicum.exploreWithMe.dao.EventRepository;
-import ru.practicum.exploreWithMe.dao.LocationRepository;
-import ru.practicum.exploreWithMe.dao.UserRepository;
+import ru.practicum.exploreWithMe.dao.*;
 import ru.practicum.exploreWithMe.dto.*;
 import ru.practicum.exploreWithMe.entity.Category;
 import ru.practicum.exploreWithMe.entity.Event;
 import ru.practicum.exploreWithMe.entity.EventState;
 import ru.practicum.exploreWithMe.entity.User;
-import ru.practicum.exploreWithMe.exception.AccessErrorException;
-import ru.practicum.exploreWithMe.exception.EventUserUpdateException;
-import ru.practicum.exploreWithMe.exception.InvalidDateException;
-import ru.practicum.exploreWithMe.exception.NoDataFoundException;
+import ru.practicum.exploreWithMe.exception.*;
 import ru.practicum.exploreWithMe.mapper.EventMapper;
+import ru.practicum.exploreWithMe.mapper.RequestMapper;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +27,9 @@ public class EventServiceImp implements EventService {
     private UserRepository userRepository;
 
     @Autowired
+    private RequestRepository requestRepository;
+
+    @Autowired
     private LocationRepository locationRepository;
 
     @Autowired
@@ -41,6 +37,9 @@ public class EventServiceImp implements EventService {
 
     @Autowired
     EventMapper eventMapper;
+
+    @Autowired
+    RequestMapper requestMapper;
 
     @Override
     public EventFullDto addEvent(NewEventDto newEventDto, int userId) {
@@ -50,19 +49,22 @@ public class EventServiceImp implements EventService {
     }
 
     @Override
-    public EventFullDto userUpdateEvent(int userId, int eventId, UpdateEventUserRequest updateEventRequest) { //TODO
+    public EventFullDto updateEventByUser(int userId, int eventId, UpdateEventUserRequest updateEventRequest) {
         checkIsUserOwnerByEvent(userId, eventId);
         checkValidEventStateForUpdate(eventId);
-        Event updateEvent = updateEventField(eventId, updateEventRequest);
+        Event updateEvent = updateEventFieldUser(eventId, updateEventRequest);
         return eventMapper.convertToEventFullDto(eventRepository.save(updateEvent));
     }
 
     @Override
-    public List<EventShortDto> getAllEventsByCurrentUser(int userId, Optional<Integer> from, Optional<Integer> size) {
-        if (from.isPresent() && size.isPresent()) {
-            return getAllEventsWithFromSizeParam(userId, from, size);
-        }
-        return new ArrayList<>();
+    public EventFullDto updateEventByAdmin(int eventId, UpdateEventAdminRequest updateEventRequest) { //TODO create method
+        Event eventUpdate = updateEventFieldAdmin(eventId, updateEventRequest);
+        return eventMapper.convertToEventFullDto(eventRepository.save(eventUpdate));
+    }
+
+    @Override
+    public List<EventShortDto> getAllEventsByCurrentUser(int userId, Integer from, Integer size) {
+        return getAllEventsWithFromSizeParam(userId, from, size);
     }
 
     @Override
@@ -71,10 +73,27 @@ public class EventServiceImp implements EventService {
         return eventMapper.convertToEventFullDto(eventRepository.findById(eventId).get());
     }
 
-    private List<EventShortDto> getAllEventsWithFromSizeParam(int userId, Optional<Integer> from,
-                                                              Optional<Integer> size) {
-        return eventRepository.getAllEventsByCurrentUser(userId, PageRequest.of((int)
-                        Math.ceil((double) from.get() / size.get()), size.get())).getContent().stream()
+    @Override
+    public List<ResponseRequestDto> getRequestsToEvent(int userId, int eventId) {
+        checkIsUserOwnerByEvent(userId, eventId);
+        return requestRepository.findAllRequestsByEventId(eventId).stream()
+                .map(e -> requestMapper.convertToResponseRequest(e)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventFullDto> getEventsByAdmin(List<Integer> userIdList, List<EventState> eventStateList,
+                                               List<Integer> categoryIdList, LocalDateTime rangeStart,
+                                               LocalDateTime rangeEnd, Integer from,
+                                               Integer size) {
+        return eventRepository.findEventsByAdmin(userIdList, eventStateList, categoryIdList, rangeStart, rangeEnd,
+                        PageRequest.of((int) Math.ceil((double) from / size),
+                                size)).getContent().stream().map(e -> eventMapper.convertToEventFullDto(e))
+                .collect(Collectors.toList());
+    }
+
+    private List<EventShortDto> getAllEventsWithFromSizeParam(int userId, Integer from, Integer size) {
+        return eventRepository.findAllEventsByCurrentUser(userId, PageRequest.of((int)
+                        Math.ceil((double) from / size), size)).getContent().stream()
                 .map(e -> eventMapper.convertToEventShortDto(e)).collect(Collectors.toList());
     }
 
@@ -128,7 +147,8 @@ public class EventServiceImp implements EventService {
         }
     }
 
-    private Event updateEventField(int eventId, UpdateEventUserRequest updateEventRequest) {
+    private Event updateEventFieldUser(int eventId, UpdateEventUserRequest updateEventRequest) { //TODO разбить на мелкие методы
+
         Event eventFromDb = eventRepository.findById(eventId).get();
         if (updateEventRequest.getRequestModeration() != null) {
             eventFromDb.setRequestModeration(updateEventRequest.getRequestModeration());
@@ -138,8 +158,9 @@ public class EventServiceImp implements EventService {
         }
         if (updateEventRequest.getLocation() != null) {
             eventFromDb.setLocation(updateEventRequest.getLocation());
+            locationRepository.save(updateEventRequest.getLocation());
         }
-        if (checkTheExistenceCategory(updateEventRequest.getCategory()) != null) {
+        if (updateEventRequest.getCategory() != 0) {
             Category category = checkTheExistenceCategory(updateEventRequest.getCategory());
             eventFromDb.setCategory(category);
         }
@@ -155,8 +176,8 @@ public class EventServiceImp implements EventService {
         if (updateEventRequest.getParticipantLimit() != null) {
             eventFromDb.setParticipantLimit(updateEventRequest.getParticipantLimit());
         }
-        if (updateEventRequest.getUserStateAction() != null) {
-            eventFromDb.setState(convertStateActionToEventState(updateEventRequest.getUserStateAction()));
+        if (updateEventRequest.getStateAction() != null) {
+            eventFromDb.setState(convertStateActionToEventState(updateEventRequest.getStateAction()));
         }
         if (updateEventRequest.getTitle() != null) {
             eventFromDb.setTitle(updateEventRequest.getTitle());
@@ -165,11 +186,70 @@ public class EventServiceImp implements EventService {
         return eventFromDb;
     }
 
+    private Event updateEventFieldAdmin(int eventId, UpdateEventAdminRequest updateEventRequest) { //TODO разбить на мелкие методы
+
+        Event eventFromDb = checkTheExistenceEvent(eventId);
+        if (updateEventRequest.getRequestModeration() != null) {
+            eventFromDb.setRequestModeration(updateEventRequest.getRequestModeration());
+        }
+        if (updateEventRequest.getEventDate() != null) {
+            if (updateEventRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
+                throw new InvalidDateException("The start date of the event to be modified must be no earlier " +
+                        "than one hour from the date of publication.");
+            }
+            eventFromDb.setEventDate(updateEventRequest.getEventDate());
+        }
+        if (updateEventRequest.getLocation() != null) {
+            eventFromDb.setLocation(updateEventRequest.getLocation());
+            locationRepository.save(updateEventRequest.getLocation());
+        }
+        if (updateEventRequest.getCategory() != 0) {
+            Category categoryNew = checkTheExistenceCategory(updateEventRequest.getCategory());
+            eventFromDb.setCategory(categoryNew);
+        }
+        if (updateEventRequest.getPaid() != null) {
+            eventFromDb.setPaid(updateEventRequest.getPaid());
+        }
+        if (updateEventRequest.getDescription() != null) {
+            eventFromDb.setDescription(updateEventRequest.getDescription());
+        }
+        if (updateEventRequest.getAnnotation() != null) {
+            eventFromDb.setAnnotation(updateEventRequest.getAnnotation());
+        }
+        if (updateEventRequest.getParticipantLimit() != null) {
+            eventFromDb.setParticipantLimit(updateEventRequest.getParticipantLimit());
+        }
+        if (updateEventRequest.getStateAction() != null) {
+            if (!eventFromDb.getState().equals(EventState.PENDING) && updateEventRequest.getStateAction()
+                    .equals(AdminStateAction.PUBLISH_EVENT)) {
+                throw new RequestException("An event can be published only if it is in the waiting state for publication.");
+            } else if (eventFromDb.getState().equals(EventState.PUBLISHED) && updateEventRequest.getStateAction()
+                    .equals(AdminStateAction.REJECT_EVENT)) {
+                throw new RequestException("An event can be rejected only if it has not been published yet.");
+            }
+            eventFromDb.setState(convertAdminStateToEvenState(updateEventRequest.getStateAction()));
+            if (eventFromDb.getState().equals(EventState.PUBLISHED)) {
+                eventFromDb.setPublishedOn(LocalDateTime.now());
+            }
+        }
+        if (updateEventRequest.getTitle() != null) {
+            eventFromDb.setTitle(updateEventRequest.getTitle());
+        }
+        return eventFromDb;
+    }
+
     private EventState convertStateActionToEventState(UserStateAction userStateAction) {
         if (userStateAction.equals(UserStateAction.CANCEL_REVIEW)) {
             return EventState.CANCELED;
         }
         return EventState.PENDING;
+    }
+
+    private EventState convertAdminStateToEvenState(AdminStateAction stateAction) {
+        if (stateAction.equals(AdminStateAction.PUBLISH_EVENT)) {
+            return EventState.PUBLISHED;
+        }
+        return EventState.CANCELED;
     }
 }
 

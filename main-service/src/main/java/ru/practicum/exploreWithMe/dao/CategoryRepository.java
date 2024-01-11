@@ -10,4 +10,5 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query(value = "SELECT c FROM Category AS c")
     Page<Category> findAllCategoriesWithPagination(Pageable pageable);
+    Category findByName(String name);
 }

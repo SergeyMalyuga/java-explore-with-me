@@ -18,11 +18,11 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse invalidDate(InvalidDateException e) {
         return new ErrorResponse(e.getStackTrace(), e.getMessage(),
                 "For the requested operation the conditions are not met.",
-                HttpStatus.FORBIDDEN.toString(), LocalDateTime.now());
+                HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now());
     }
 
     @ExceptionHandler
@@ -34,11 +34,19 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse eventUserUpdateError(EventUserUpdateException e) {
         return new ErrorResponse(e.getStackTrace(), e.getMessage(),
                 "Update error.",
-                HttpStatus.NOT_FOUND.toString(), LocalDateTime.now());
+                HttpStatus.CONFLICT.toString(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse repeatRequestError(RequestException e) {
+        return new ErrorResponse(e.getStackTrace(), e.getMessage(),
+                "Integrity constraint has been violated.",
+                HttpStatus.CONFLICT.toString(), LocalDateTime.now());
     }
 
 }

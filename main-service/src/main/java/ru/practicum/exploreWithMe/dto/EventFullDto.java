@@ -32,7 +32,7 @@ public class EventFullDto {
     private Location location;
     private boolean paid;
     private int participantLimit;
-    private boolean requestModeration;
+    private Boolean requestModeration;
     private String title;
     private int confirmedRequests;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

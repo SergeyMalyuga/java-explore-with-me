@@ -36,7 +36,7 @@ public class NewEventDto {
     @NotNull
     private boolean paid;
     private int participantLimit;
-    private boolean requestModeration;
+    private Boolean requestModeration;
     @NotBlank
     @Size(message = "Value: Min 3 / Max value 120", min = 3, max = 120)
     private String title;

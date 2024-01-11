@@ -29,14 +29,14 @@ public class EventMapper {
                 .setLocation(event.getLocation())
                 .setParticipantLimit(event.getParticipantLimit())
                 .setPublishedOn(event.getPublishedOn())
-                .setRequestModeration(event.isRequestModeration())
+                .setRequestModeration(event.getRequestModeration())
                 .setState(event.getState())
                 .setTitle(event.getTitle())
                 .setViews(event.getViews());
     }
 
     public Event convertToEvent(NewEventDto newEventDto) {
-        return new Event().setAnnotation(newEventDto.getAnnotation())
+        Event event = new Event().setAnnotation(newEventDto.getAnnotation())
                 .setDescription(newEventDto.getDescription())
                 .setEventDate(newEventDto.getEventDate())
                 .setLocation(newEventDto.getLocation())
@@ -44,8 +44,13 @@ public class EventMapper {
                 .setState(EventState.PENDING)
                 .setPaid(newEventDto.isPaid())
                 .setParticipantLimit(newEventDto.getParticipantLimit())
-                .setRequestModeration(newEventDto.isRequestModeration())
                 .setTitle(newEventDto.getTitle());
+        if (newEventDto.getRequestModeration() != null) {
+            event.setRequestModeration(newEventDto.getRequestModeration());
+        } else {
+            event.setRequestModeration(true);
+        }
+        return event;
     }
 
     public EventShortDto convertToEventShortDto(Event event) {
