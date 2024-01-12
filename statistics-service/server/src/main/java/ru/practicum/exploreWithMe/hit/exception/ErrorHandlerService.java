@@ -4,10 +4,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ErrorHandler {
+public class ErrorHandlerService {
 
     @ExceptionHandler
-    public ErrorResponse invalidDate(InvalidDataException e) {
-        return new ErrorResponse(e.getMessage(), "Ошибка ввода даты/времени.");
+    public ErrorResponseService invalidDate(InvalidDataException e) {
+        return new ErrorResponseService(e.getMessage(), "Ошибка ввода даты/времени.");
     }
 }

@@ -1,10 +1,10 @@
 package ru.practicum.exploreWithMe.hit.exception;
 
-public class ErrorResponse {
+public class ErrorResponseService {
     private String error;
     private String description;
 
-    public ErrorResponse(String error, String description) {
+    public ErrorResponseService(String error, String description) {
         this.error = error;
         this.description = description;
     }

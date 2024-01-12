@@ -26,4 +26,6 @@ public interface EventService {
     List<EventFullDto> getEventsByAdmin(List<Integer> userIdList, List<EventState> eventStateList,
                                         List<Integer> categoryIdList, LocalDateTime rangeStart,
                                         LocalDateTime rangeEnd, Integer from, Integer size);
+
+    EventFullDto getEventByIdPublic(int eventId, String ip, String uri);
 }

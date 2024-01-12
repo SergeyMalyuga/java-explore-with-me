@@ -26,4 +26,11 @@ public class HitDto {
     @NotNull(message = "Значение timestamp не может быть пустым.")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
+
+    public HitDto(String app, String uri, String ip, LocalDateTime timestamp) {
+        this.app = app;
+        this.uri = uri;
+        this.ip = ip;
+        this.timestamp = timestamp;
+    }
 }

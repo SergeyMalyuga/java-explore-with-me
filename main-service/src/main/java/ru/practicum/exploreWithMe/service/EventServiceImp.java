@@ -3,10 +3,12 @@ package ru.practicum.exploreWithMe.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.exploreWithMe.client.StatClient;
 import ru.practicum.exploreWithMe.dao.*;
 import ru.practicum.exploreWithMe.dto.*;
 import ru.practicum.exploreWithMe.entity.*;
 import ru.practicum.exploreWithMe.exception.*;
+import ru.practicum.exploreWithMe.hit.dao.HitRepository;
 import ru.practicum.exploreWithMe.mapper.EventMapper;
 import ru.practicum.exploreWithMe.mapper.RequestMapper;
 
@@ -31,6 +33,10 @@ public class EventServiceImp implements EventService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private HitRepository hitRepository;
+    @Autowired
+    private StatClient statClient;
 
     @Autowired
     EventMapper eventMapper;
@@ -87,7 +93,9 @@ public class EventServiceImp implements EventService {
     @Override
     public EventFullDto getEventFullInfo(int userId, int eventId) {
         checkIsUserOwnerByEvent(userId, eventId);
-        return eventMapper.convertToEventFullDto(eventRepository.findById(eventId).get());
+        Event event = eventRepository.findById(eventId).get();
+        statClient.setEventView(event);
+        return eventMapper.convertToEventFullDto(event);
     }
 
     @Override
@@ -104,13 +112,27 @@ public class EventServiceImp implements EventService {
                                                Integer size) {
         return eventRepository.findEventsByAdmin(userIdList, eventStateList, categoryIdList, rangeStart, rangeEnd,
                         PageRequest.of((int) Math.ceil((double) from / size),
-                                size)).getContent().stream().map(e -> eventMapper.convertToEventFullDto(e))
+                                size)).getContent().stream()
+                .peek(e -> statClient.setEventView(e))
+                .map(e -> eventMapper.convertToEventFullDto(e))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public EventFullDto getEventByIdPublic(int eventId, String ip, String uri) {
+        Event event = checkTheExistenceEvent(eventId);
+        statClient.setEventView(event);
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new AccessErrorException("Event state must be published.");
+        }
+        statClient.addEventView(ip, uri);
+        return eventMapper.convertToEventFullDto(event);
     }
 
     private List<EventShortDto> getAllEventsWithFromSizeParam(int userId, Integer from, Integer size) {
         return eventRepository.findAllEventsByCurrentUser(userId, PageRequest.of((int)
                         Math.ceil((double) from / size), size)).getContent().stream()
+                .peek(e -> statClient.setEventView(e))
                 .map(e -> eventMapper.convertToEventShortDto(e)).collect(Collectors.toList());
     }
 
