@@ -14,6 +14,9 @@ public interface EventService {
 
     EventFullDto updateEventByAdmin(int eventId, UpdateEventAdminRequest updateEventRequest);
 
+    EventRequestStatusUpdateResult updateRequestStatus(int userId, int eventId,
+                                                       EventRequestStatusUpdateRequest updateRequest);
+
     List<EventShortDto> getAllEventsByCurrentUser(int userId, Integer from, Integer size);
 
     EventFullDto getEventFullInfo(int userId, int eventId);

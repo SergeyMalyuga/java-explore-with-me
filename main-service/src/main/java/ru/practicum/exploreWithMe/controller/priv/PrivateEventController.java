@@ -49,7 +49,14 @@ public class PrivateEventController {
 
     @GetMapping("/{eventId}/requests")
     public List<ResponseRequestDto> getRequestsToEvent(@PathVariable(name = "userId") int userId,
-                                                            @PathVariable(name = "eventId") int eventId) {
+                                                       @PathVariable(name = "eventId") int eventId) {
         return eventService.getRequestsToEvent(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/requests")
+    public EventRequestStatusUpdateResult changeRequestStatus(@PathVariable(name = "userId") int userId,
+                                                              @PathVariable(name = "eventId") int eventId,
+                                                              @RequestBody EventRequestStatusUpdateRequest updateRequest) {
+        return eventService.updateRequestStatus(userId, eventId, updateRequest);
     }
 }

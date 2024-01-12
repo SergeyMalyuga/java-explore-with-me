@@ -5,10 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.dao.*;
 import ru.practicum.exploreWithMe.dto.*;
-import ru.practicum.exploreWithMe.entity.Category;
-import ru.practicum.exploreWithMe.entity.Event;
-import ru.practicum.exploreWithMe.entity.EventState;
-import ru.practicum.exploreWithMe.entity.User;
+import ru.practicum.exploreWithMe.entity.*;
 import ru.practicum.exploreWithMe.exception.*;
 import ru.practicum.exploreWithMe.mapper.EventMapper;
 import ru.practicum.exploreWithMe.mapper.RequestMapper;
@@ -57,9 +54,29 @@ public class EventServiceImp implements EventService {
     }
 
     @Override
-    public EventFullDto updateEventByAdmin(int eventId, UpdateEventAdminRequest updateEventRequest) { //TODO create method
+    public EventFullDto updateEventByAdmin(int eventId, UpdateEventAdminRequest updateEventRequest) {
         Event eventUpdate = updateEventFieldAdmin(eventId, updateEventRequest);
         return eventMapper.convertToEventFullDto(eventRepository.save(eventUpdate));
+    }
+
+    @Override
+    public EventRequestStatusUpdateResult updateRequestStatus(int userId, int eventId, //TODO create method
+                                                              EventRequestStatusUpdateRequest updateRequest) {
+
+        Event event = checkTheExistenceEvent(eventId);
+        User user = checkTheExistenceUser(userId);
+
+        EventRequestStatusUpdateResult updateResult = new EventRequestStatusUpdateResult();
+        List<ParticipationRequest> requestsList = requestRepository.findByRequestIds(updateRequest.getRequestIds());
+
+        checkIsReqStateBeUpdate(updateRequest, requestsList, updateResult, event);
+        if (!updateResult.getConfirmedRequests().isEmpty() && !updateResult.getRejectedRequests().isEmpty()) {
+            return updateResult;
+        }
+
+        changeAllReqStateByResponse(updateRequest, requestsList, updateResult, event);
+        return updateResult;
+
     }
 
     @Override
@@ -250,6 +267,44 @@ public class EventServiceImp implements EventService {
             return EventState.PUBLISHED;
         }
         return EventState.CANCELED;
+    }
+
+
+    private void checkIsReqStateBeUpdate(EventRequestStatusUpdateRequest updateRequest,
+                                         List<ParticipationRequest> requestsList,
+                                         EventRequestStatusUpdateResult updateResult,
+                                         Event event) {
+        if ((event.getRequestModeration().equals(false) || event.getParticipantLimit() == 0)
+                && updateRequest.getStatus().equals(RequestState.CONFIRMED)) {
+            updateResult.setConfirmedRequests(requestsList.stream()
+                    .map(e -> requestMapper.convertToResponseRequest(e)).collect(Collectors.toList()));
+        }
+        if (event.getConfirmedRequests() == event.getParticipantLimit()) {
+            throw new RequestException("The limit on applications for this event has been reached.");
+        }
+    }
+
+    private void changeAllReqStateByResponse(EventRequestStatusUpdateRequest updateRequest,
+                                             List<ParticipationRequest> requestsList,
+                                             EventRequestStatusUpdateResult updateResult,
+                                             Event event) {
+        for (ParticipationRequest request : requestsList) {
+            if (!request.getRequestStatus().equals(RequestStatus.PENDING)) {
+                throw new RequestException("The status can only be changed for applications that " +
+                        "are in the waiting state.");
+            }
+            if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
+                request.setRequestStatus(RequestStatus.CANCELED);
+            } else {
+                request.setRequestStatus(updateRequest.getStatus());
+                if (request.getRequestStatus().equals(RequestStatus.CONFIRMED)) {
+                    updateResult.getConfirmedRequests().add(requestMapper.convertToResponseRequest(request));
+                } else {
+                    updateResult.getRejectedRequests().add(requestMapper.convertToResponseRequest(request));
+                }
+            }
+            requestRepository.save(request);
+        }
     }
 }
 
