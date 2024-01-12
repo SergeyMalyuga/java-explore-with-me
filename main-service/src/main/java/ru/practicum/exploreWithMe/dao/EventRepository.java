@@ -10,6 +10,7 @@ import ru.practicum.exploreWithMe.entity.EventState;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Integer> {
 
@@ -29,4 +30,7 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
 
     @Query(value = "SELECT e FROM Event AS e WHERE e.category.id = :categoryId")
     List<Event> findEventsByCategory(@Param("categoryId") int categoryId);
+
+    @Query(value = "SELECT e FROM Event AS e WHERE e.id IN (:eventIds)")
+    List<Event> findEventsByIds(@Param(("eventIds")) Set<Integer> eventIds);
 }

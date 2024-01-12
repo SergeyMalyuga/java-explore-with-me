@@ -60,7 +60,7 @@ public class EventServiceImp implements EventService {
     }
 
     @Override
-    public EventRequestStatusUpdateResult updateRequestStatus(int userId, int eventId, //TODO create method
+    public EventRequestStatusUpdateResult updateRequestStatus(int userId, int eventId, //TODO счётчик увеличения количества запросов
                                                               EventRequestStatusUpdateRequest updateRequest) {
 
         Event event = checkTheExistenceEvent(eventId);
@@ -239,7 +239,8 @@ public class EventServiceImp implements EventService {
         if (updateEventRequest.getStateAction() != null) {
             if (!eventFromDb.getState().equals(EventState.PENDING) && updateEventRequest.getStateAction()
                     .equals(AdminStateAction.PUBLISH_EVENT)) {
-                throw new RequestException("An event can be published only if it is in the waiting state for publication.");
+                throw new RequestException("An event can be published only if it is in the " +
+                        "waiting state for publication.");
             } else if (eventFromDb.getState().equals(EventState.PUBLISHED) && updateEventRequest.getStateAction()
                     .equals(AdminStateAction.REJECT_EVENT)) {
                 throw new RequestException("An event can be rejected only if it has not been published yet.");

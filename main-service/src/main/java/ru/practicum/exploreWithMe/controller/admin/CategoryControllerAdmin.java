@@ -10,7 +10,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/admin/categories")
-public class AdminCategoryController {
+public class CategoryControllerAdmin {
 
     @Autowired
     private CategoryService categoryService;

@@ -3,7 +3,6 @@ package ru.practicum.exploreWithMe.controller.priv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.exploreWithMe.dto.ParticipationRequestDto;
 import ru.practicum.exploreWithMe.dto.ResponseRequestDto;
 import ru.practicum.exploreWithMe.service.RequestService;
 
@@ -11,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users/{userId}/requests")
-public class PrivateRequestController {
+public class RequestControllerPrivate {
 
     @Autowired
     private RequestService requestService;

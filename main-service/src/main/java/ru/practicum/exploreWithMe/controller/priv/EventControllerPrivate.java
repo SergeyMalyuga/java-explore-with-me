@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users/{userId}/events")
-public class PrivateEventController {
+public class EventControllerPrivate {
 
     @Autowired
     private EventService eventService;
