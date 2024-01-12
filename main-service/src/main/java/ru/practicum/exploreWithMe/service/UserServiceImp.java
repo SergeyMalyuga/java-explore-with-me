@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.dao.UserRepository;
-import ru.practicum.exploreWithMe.dto.CategoryDto;
 import ru.practicum.exploreWithMe.dto.UserDto;
 import ru.practicum.exploreWithMe.exception.NoDataFoundException;
 import ru.practicum.exploreWithMe.exception.RequestException;

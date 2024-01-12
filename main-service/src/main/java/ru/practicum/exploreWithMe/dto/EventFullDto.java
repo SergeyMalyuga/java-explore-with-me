@@ -9,10 +9,7 @@ import lombok.experimental.Accessors;
 import ru.practicum.exploreWithMe.entity.Category;
 import ru.practicum.exploreWithMe.entity.EventState;
 import ru.practicum.exploreWithMe.entity.Location;
-import ru.practicum.exploreWithMe.entity.User;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter

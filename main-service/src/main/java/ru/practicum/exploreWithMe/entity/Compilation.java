@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "compilations")
@@ -26,7 +27,7 @@ public class Compilation {
     @JoinTable(name = "compilation_events",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private List<Event> events;
+    private Set<Event> events;
     @Column(name = "pinned")
     private Boolean pinned;
     @Column(name = "title")

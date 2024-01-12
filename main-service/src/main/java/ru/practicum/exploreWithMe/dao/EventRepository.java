@@ -32,5 +32,5 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     List<Event> findEventsByCategory(@Param("categoryId") int categoryId);
 
     @Query(value = "SELECT e FROM Event AS e WHERE e.id IN (:eventIds)")
-    List<Event> findEventsByIds(@Param(("eventIds")) Set<Integer> eventIds);
+    Set<Event> findEventsByIds(@Param(("eventIds")) Set<Integer> eventIds);
 }

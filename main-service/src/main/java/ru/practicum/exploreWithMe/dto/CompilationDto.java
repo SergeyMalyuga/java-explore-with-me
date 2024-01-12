@@ -5,9 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ru.practicum.exploreWithMe.entity.Event;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,7 +16,7 @@ import java.util.List;
 public class CompilationDto {
 
     private int id;
-    private List<EventShortDto> events;
+    private Set<EventShortDto> events;
     private Boolean pinned;
     private String title;
 }

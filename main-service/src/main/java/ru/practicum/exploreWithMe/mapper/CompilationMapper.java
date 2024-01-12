@@ -26,7 +26,7 @@ public class CompilationMapper {
     public CompilationDto convertToCompilationDto(Compilation compilation) {
         return new CompilationDto().setId(compilation.getId())
                 .setEvents(compilation.getEvents().stream().map(e -> eventMapper.convertToEventShortDto(e))
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toSet()))
                 .setPinned(compilation.getPinned())
                 .setTitle(compilation.getTitle());
     }

@@ -19,7 +19,7 @@ public class NewCompilationDto {
 
     private Set<Integer> events;
     private Boolean pinned;
-    @NotBlank
     @Size(message = "Value: Min 1 - Max 50", min = 1, max = 50)
+    @NotBlank(groups = Marker.OnCreate.class)
     private String title;
 }
