@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.client.StatClient;
-import ru.practicum.exploreWithMe.dao.*;
 import ru.practicum.exploreWithMe.dto.*;
 import ru.practicum.exploreWithMe.entity.*;
 import ru.practicum.exploreWithMe.exception.*;
 import ru.practicum.exploreWithMe.mapper.EventMapper;
 import ru.practicum.exploreWithMe.mapper.RequestMapper;
+import ru.practicum.exploreWithMe.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -65,7 +65,7 @@ public class EventServiceImp implements EventService {
     }
 
     @Override
-    public EventRequestStatusUpdateResult updateRequestStatus(int userId, int eventId, //TODO счётчик увеличения количества запросов
+    public EventRequestStatusUpdateResult updateRequestStatus(int userId, int eventId,
                                                               EventRequestStatusUpdateRequest updateRequest) {
 
         Event event = checkTheExistenceEvent(eventId);
@@ -192,8 +192,8 @@ public class EventServiceImp implements EventService {
     private void checkValidDate(Event event) {
         LocalDateTime startEvent = event.getEventDate();
         if (startEvent.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new InvalidDateException("Field: eventDate. Error: должно содержать дату, которая еще не наступила. " +
-                    "Value: " + event.getEventDate());
+            throw new InvalidDateException("Field: eventDate. Error: должно содержать дату, которая " +
+                    "еще не наступила. Value: " + event.getEventDate());
         }
     }
 
@@ -333,6 +333,7 @@ public class EventServiceImp implements EventService {
                 request.setRequestStatus(updateRequest.getStatus());
                 if (request.getRequestStatus().equals(RequestStatus.CONFIRMED)) {
                     updateResult.getConfirmedRequests().add(requestMapper.convertToResponseRequest(request));
+                    incrementConfirmedRequest(event);
                 } else {
                     updateResult.getRejectedRequests().add(requestMapper.convertToResponseRequest(request));
                 }
@@ -366,6 +367,11 @@ public class EventServiceImp implements EventService {
         }
 
         throw new InvalidDateException("Sorting by " + sort + "is not possible.");
+    }
+
+    private void incrementConfirmedRequest(Event event) {
+        int count = 1;
+        event.setConfirmedRequests(event.getConfirmedRequests() + count);
     }
 }
 

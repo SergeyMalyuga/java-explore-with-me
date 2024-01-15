@@ -27,9 +27,11 @@ public class EventControllerPrivate {
 
     @GetMapping()
     public List<EventShortDto> getAllEventsByCurrentUser(@PathVariable(name = "userId") int userId,
-                                                         @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
+                                                         @PositiveOrZero @RequestParam(name = "from",
+                                                                 defaultValue = "0")
                                                          Integer from,
-                                                         @Positive @RequestParam(name = "size", defaultValue = "10")
+                                                         @Positive @RequestParam(name = "size",
+                                                                 defaultValue = "10")
                                                          Integer size) {
         return eventService.getAllEventsByCurrentUser(userId, from, size);
     }
@@ -56,7 +58,8 @@ public class EventControllerPrivate {
     @PatchMapping("/{eventId}/requests")
     public EventRequestStatusUpdateResult changeRequestStatus(@PathVariable(name = "userId") int userId,
                                                               @PathVariable(name = "eventId") int eventId,
-                                                              @RequestBody EventRequestStatusUpdateRequest updateRequest) {
+                                                              @RequestBody
+                                                              EventRequestStatusUpdateRequest updateRequest) {
         return eventService.updateRequestStatus(userId, eventId, updateRequest);
     }
 }
