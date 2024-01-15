@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin/users")
@@ -33,10 +32,8 @@ public class UserControllerAdmin {
 
     @GetMapping
     public List<UserDto> getUsers(@RequestParam(name = "ids", required = false) List<Integer> uid,
-                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
-                                  Optional<Integer> from,
-                                  @Positive @RequestParam(name = "size", defaultValue = "10")
-                                  Optional<Integer> size) {
+                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                  @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         return userService.getUsers(uid, from, size);
     }
 }

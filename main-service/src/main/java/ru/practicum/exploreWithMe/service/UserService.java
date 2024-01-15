@@ -3,7 +3,6 @@ package ru.practicum.exploreWithMe.service;
 import ru.practicum.exploreWithMe.dto.UserDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
@@ -11,6 +10,6 @@ public interface UserService {
 
     void removeUser(int userId);
 
-    List<UserDto> getUsers(List<Integer> uid, Optional<Integer> from, Optional<Integer> size);
+    List<UserDto> getUsers(List<Integer> uid, Integer from, Integer size);
 
 }

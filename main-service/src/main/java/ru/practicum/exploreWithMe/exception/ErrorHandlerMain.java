@@ -9,51 +9,51 @@ import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class ErrorHandler {
+public class ErrorHandlerMain {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse noDataFound(NoDataFoundException e) {
-        return new ErrorResponse(e.getStackTrace(), e.getMessage(), "The required object was not found.",
+    public ErrorResponseMain noDataFound(NoDataFoundException e) {
+        return new ErrorResponseMain(e.getStackTrace(), e.getMessage(), "The required object was not found.",
                 HttpStatus.NOT_FOUND.toString(), LocalDateTime.now());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse invalidDate(InvalidDateException e) {
-        return new ErrorResponse(e.getStackTrace(), e.getMessage(),
+    public ErrorResponseMain invalidDate(InvalidDateException e) {
+        return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
                 "For the requested operation the conditions are not met.",
                 HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse accessError(AccessErrorException e) {
-        return new ErrorResponse(e.getStackTrace(), e.getMessage(),
+    public ErrorResponseMain accessError(AccessErrorException e) {
+        return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
                 "Data access error.",
                 HttpStatus.NOT_FOUND.toString(), LocalDateTime.now());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse eventUserUpdateError(EventUserUpdateException e) {
-        return new ErrorResponse(e.getStackTrace(), e.getMessage(),
+    public ErrorResponseMain eventUserUpdateError(EventUserUpdateException e) {
+        return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
                 "Update error.",
                 HttpStatus.CONFLICT.toString(), LocalDateTime.now());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse repeatRequestError(RequestException e) {
-        return new ErrorResponse(e.getStackTrace(), e.getMessage(),
+    public ErrorResponseMain repeatRequestError(RequestException e) {
+        return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
                 "Integrity constraint has been violated.",
                 HttpStatus.CONFLICT.toString(), LocalDateTime.now());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse notBlankError(ConstraintViolationException e) {
-        return new ErrorResponse(e.getStackTrace(), e.getMessage(),
+    public ErrorResponseMain notBlankError(ConstraintViolationException e) {
+        return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
                 "NotBlank exception.",
                 HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now());
     }

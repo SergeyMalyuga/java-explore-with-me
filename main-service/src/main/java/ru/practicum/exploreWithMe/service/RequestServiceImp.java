@@ -2,15 +2,15 @@ package ru.practicum.exploreWithMe.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.exploreWithMe.dao.EventRepository;
-import ru.practicum.exploreWithMe.dao.RequestRepository;
-import ru.practicum.exploreWithMe.dao.UserRepository;
 import ru.practicum.exploreWithMe.dto.ParticipationRequestDto;
 import ru.practicum.exploreWithMe.dto.ResponseRequestDto;
 import ru.practicum.exploreWithMe.entity.*;
 import ru.practicum.exploreWithMe.exception.NoDataFoundException;
 import ru.practicum.exploreWithMe.exception.RequestException;
 import ru.practicum.exploreWithMe.mapper.RequestMapper;
+import ru.practicum.exploreWithMe.repository.EventRepository;
+import ru.practicum.exploreWithMe.repository.RequestRepository;
+import ru.practicum.exploreWithMe.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

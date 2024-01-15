@@ -3,17 +3,15 @@ package ru.practicum.exploreWithMe.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.practicum.exploreWithMe.dao.CategoryRepository;
-import ru.practicum.exploreWithMe.dao.EventRepository;
 import ru.practicum.exploreWithMe.dto.CategoryDto;
 import ru.practicum.exploreWithMe.entity.Category;
 import ru.practicum.exploreWithMe.exception.NoDataFoundException;
 import ru.practicum.exploreWithMe.exception.RequestException;
 import ru.practicum.exploreWithMe.mapper.CategoryMapper;
+import ru.practicum.exploreWithMe.repository.CategoryRepository;
+import ru.practicum.exploreWithMe.repository.EventRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,11 +57,8 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getCategories(Optional<Integer> from, Optional<Integer> size) {
-        if (from.isPresent() && size.isPresent()) {
-            return getCategoriesWithFromSizeParam(from, size);
-        }
-        return new ArrayList<>();
+    public List<CategoryDto> getCategories(Integer from, Integer size) {
+        return getCategoriesWithFromSizeParam(from, size);
     }
 
     private Category checkTheExistenceCategory(int categoryId) {
@@ -71,11 +66,10 @@ public class CategoryServiceImp implements CategoryService {
                 new NoDataFoundException("Category with " + categoryId + " was not found"));
     }
 
-    private List<CategoryDto> getCategoriesWithFromSizeParam(Optional<Integer> from, Optional<Integer> size) {
+    private List<CategoryDto> getCategoriesWithFromSizeParam(Integer from, Integer size) {
         return categoryRepository.findAllCategoriesWithPagination(PageRequest.of(
-                        (int) Math.ceil((double) from.get() / size.get()),
-                        size.get())).getContent().stream().map(e -> categoryMapper.convertToCategoryDto(e))
-                .collect(Collectors.toList());
+                        (int) Math.ceil((double) from / size), size)).getContent().stream()
+                .map(e -> categoryMapper.convertToCategoryDto(e)).collect(Collectors.toList());
     }
 
     private void checkAvailableName(CategoryDto categoryDto) {
