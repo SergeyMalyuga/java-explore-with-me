@@ -12,6 +12,7 @@ import ru.practicum.exploreWithMe.mapper.EventMapper;
 import ru.practicum.exploreWithMe.mapper.RequestMapper;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,6 +129,17 @@ public class EventServiceImp implements EventService {
         return eventMapper.convertToEventFullDto(event);
     }
 
+    @Override
+    public List<EventFullDto> getAllEventsPublic(String text, List<Integer> categories, Boolean paid,
+                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                                 Boolean onlyAvailable, String sort, Integer from, Integer size,
+                                                 String ip, String uri) {
+
+        checkValidDatePublic(rangeStart, rangeEnd);
+        statClient.addEventView(ip, uri);
+        return sortEventsPublic(sort, text, categories, paid, onlyAvailable, rangeStart, rangeEnd, from, size);
+    }
+
     private List<EventShortDto> getAllEventsWithFromSizeParam(int userId, Integer from, Integer size) {
         return eventRepository.findAllEventsByCurrentUser(userId, PageRequest.of((int)
                         Math.ceil((double) from / size), size)).getContent().stream()
@@ -185,7 +197,7 @@ public class EventServiceImp implements EventService {
         }
     }
 
-    private Event updateEventFieldUser(int eventId, UpdateEventUserRequest updateEventRequest) { //TODO разбить на мелкие методы
+    private Event updateEventFieldUser(int eventId, UpdateEventUserRequest updateEventRequest) {
 
         Event eventFromDb = eventRepository.findById(eventId).get();
         if (updateEventRequest.getRequestModeration() != null) {
@@ -224,7 +236,7 @@ public class EventServiceImp implements EventService {
         return eventFromDb;
     }
 
-    private Event updateEventFieldAdmin(int eventId, UpdateEventAdminRequest updateEventRequest) { //TODO разбить на мелкие методы
+    private Event updateEventFieldAdmin(int eventId, UpdateEventAdminRequest updateEventRequest) {
 
         Event eventFromDb = checkTheExistenceEvent(eventId);
         if (updateEventRequest.getRequestModeration() != null) {
@@ -328,5 +340,33 @@ public class EventServiceImp implements EventService {
             requestRepository.save(request);
         }
     }
+
+
+    private void checkValidDatePublic(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
+        if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
+            throw new InvalidDateException("Even start can`t be after it end.");
+        }
+    }
+
+    private List<EventFullDto> sortEventsPublic(String sort, String text, List<Integer> categories,
+                                                Boolean paid, Boolean onlyAvailable, LocalDateTime rangeStart,
+                                                LocalDateTime rangeEnd, Integer from, Integer size) {
+
+        List<EventFullDto> eventsList = eventRepository.findAllEventsPublic(text, categories, paid, rangeStart,
+                        rangeEnd, onlyAvailable,
+                        PageRequest.of((int) Math.ceil((double) from / size), size)).stream()
+                .map(e -> eventMapper.convertToEventFullDto(e)).collect(Collectors.toList());
+
+        if (SortStatus.VIEW.toString().equals(sort)) {
+            Collections.sort(eventsList, (e1, e2) -> e2.getViews().compareTo(e1.getViews()));
+            return eventsList;
+        } else if (SortStatus.EVENT_DATE.toString().equals(sort)) {
+            Collections.sort(eventsList, (e1, e2) -> e2.getEventDate().compareTo(e1.getEventDate()));
+            return eventsList;
+        }
+
+        throw new InvalidDateException("Sorting by " + sort + "is not possible.");
+    }
 }
+
 

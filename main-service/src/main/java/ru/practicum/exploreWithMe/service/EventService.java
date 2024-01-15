@@ -2,6 +2,7 @@ package ru.practicum.exploreWithMe.service;
 
 import ru.practicum.exploreWithMe.dto.*;
 import ru.practicum.exploreWithMe.entity.EventState;
+import ru.practicum.exploreWithMe.entity.SortStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,4 +29,8 @@ public interface EventService {
                                         LocalDateTime rangeEnd, Integer from, Integer size);
 
     EventFullDto getEventByIdPublic(int eventId, String ip, String uri);
+
+    List<EventFullDto> getAllEventsPublic(String text, List<Integer> categories, Boolean paid, LocalDateTime rangeStart,
+                                          LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Integer from,
+                                          Integer size, String ip, String uri);
 }

@@ -43,7 +43,7 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Override
-    public CategoryDto updateCategory(int categoryId, CategoryDto categoryUpdate) { //TODO
+    public CategoryDto updateCategory(int categoryId, CategoryDto categoryUpdate) {
         Category category = checkTheExistenceCategory(categoryId);
         if (category.getName().equals(categoryUpdate.getName())) {
             return categoryMapper.convertToCategoryDto(categoryRepository.save(category));

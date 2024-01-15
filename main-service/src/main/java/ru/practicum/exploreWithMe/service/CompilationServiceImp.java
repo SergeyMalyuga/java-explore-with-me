@@ -71,11 +71,11 @@ public class CompilationServiceImp implements CompilationService {
     }
 
     private Compilation checkTheExistenceCompilation(int compId) {
-        return compilationRepository.findById(compId).orElseThrow(() -> new NoDataFoundException("Compilation with " + compId
-                + " was not found"));
+        return compilationRepository.findById(compId).orElseThrow(() -> new NoDataFoundException("Compilation with "
+                + compId + " was not found"));
     }
 
-    private void updateCompilationField(Compilation compilation, NewCompilationDto newCompilation) { //TODO
+    private void updateCompilationField(Compilation compilation, NewCompilationDto newCompilation) {
         Optional<Set> eventIdsList = Optional.ofNullable(newCompilation.getEvents());
         if (eventIdsList.isPresent()) {
             if (!newCompilation.getEvents().isEmpty()) {

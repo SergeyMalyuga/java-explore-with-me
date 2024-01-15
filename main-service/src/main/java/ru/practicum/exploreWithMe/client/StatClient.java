@@ -2,9 +2,9 @@ package ru.practicum.exploreWithMe.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.practicum.exploreWithMe.StatisticsClient;
 import ru.practicum.exploreWithMe.HitDto;
 import ru.practicum.exploreWithMe.HitStatsDto;
+import ru.practicum.exploreWithMe.StatisticsClient;
 import ru.practicum.exploreWithMe.entity.Event;
 
 import java.time.LocalDateTime;
@@ -23,11 +23,11 @@ public class StatClient {
             event.setViews(0L);
         } else {
             int hitStatsIndex = 0;
-             event.setViews(viewsList.get(hitStatsIndex).getHits());
+            event.setViews(viewsList.get(hitStatsIndex).getHits());
         }
     }
 
     public void addEventView(String ip, String uri) {
-        statClient.postHit(new HitDto(null,"ewm-main-service", uri, ip, LocalDateTime.now()));
+        statClient.postHit(new HitDto(null, "ewm-main-service", uri, ip, LocalDateTime.now()));
     }
 }

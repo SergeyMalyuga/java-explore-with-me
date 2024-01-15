@@ -22,8 +22,4 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, I
 
     @Query(value = "SELECT pr FROM ParticipationRequest AS pr WHERE pr.id IN(:requestIds) ")
     List<ParticipationRequest> findByRequestIds(@Param("requestIds") List<Integer> requestIds);
-
-    /*@Query(value = "SELECT pr FROM ParticipationRequest AS pr WHERE pr.id IN(:requestIds) " +
-            "AND pr.requestStatus = 'REJECTED' ")
-    List<ParticipationRequest> findRejectedRequestById(@Param("requestIds") List<Integer> requestIds);*/
 }
