@@ -43,7 +43,7 @@ public class HitDto {
 
     }
 
-    public HitDto(String app ) {
+    public HitDto(String app) {
         this.app = app;
 
     }

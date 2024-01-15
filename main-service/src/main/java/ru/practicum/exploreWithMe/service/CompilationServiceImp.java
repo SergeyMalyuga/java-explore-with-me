@@ -3,13 +3,13 @@ package ru.practicum.exploreWithMe.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.practicum.exploreWithMe.dao.CompilationRepository;
-import ru.practicum.exploreWithMe.dao.EventRepository;
 import ru.practicum.exploreWithMe.dto.CompilationDto;
 import ru.practicum.exploreWithMe.dto.NewCompilationDto;
 import ru.practicum.exploreWithMe.entity.Compilation;
 import ru.practicum.exploreWithMe.exception.NoDataFoundException;
 import ru.practicum.exploreWithMe.mapper.CompilationMapper;
+import ru.practicum.exploreWithMe.repository.CompilationRepository;
+import ru.practicum.exploreWithMe.repository.EventRepository;
 
 import java.util.List;
 import java.util.Optional;

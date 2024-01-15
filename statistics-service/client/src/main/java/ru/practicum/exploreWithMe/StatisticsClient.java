@@ -12,8 +12,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.exploreWithMe.HitDto;
-import ru.practicum.exploreWithMe.HitStatsDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
