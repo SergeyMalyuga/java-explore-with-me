@@ -8,7 +8,6 @@ import ru.practicum.exploreWithMe.service.CategoryService;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/categories")
@@ -24,9 +23,9 @@ public class CategoryControllerPublic {
 
     @GetMapping
     public List<CategoryDto> getCategories(@PositiveOrZero @RequestParam(name = "from", defaultValue = "0")
-                                           Optional<Integer> from,
+                                           Integer from,
                                            @Positive @RequestParam(name = "size", defaultValue = "10")
-                                           Optional<Integer> size) {
+                                           Integer size) {
         return categoryService.getCategories(from, size);
     }
 }

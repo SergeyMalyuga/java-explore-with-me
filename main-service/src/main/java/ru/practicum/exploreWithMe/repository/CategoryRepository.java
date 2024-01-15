@@ -1,4 +1,4 @@
-package ru.practicum.exploreWithMe.dao;
+package ru.practicum.exploreWithMe.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,5 +10,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query(value = "SELECT c FROM Category AS c")
     Page<Category> findAllCategoriesWithPagination(Pageable pageable);
+
     Category findByName(String name);
 }

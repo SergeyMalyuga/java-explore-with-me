@@ -2,10 +2,10 @@ package ru.practicum.exploreWithMe.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.practicum.exploreWithMe.dao.EventRepository;
 import ru.practicum.exploreWithMe.dto.CompilationDto;
 import ru.practicum.exploreWithMe.dto.NewCompilationDto;
 import ru.practicum.exploreWithMe.entity.Compilation;
+import ru.practicum.exploreWithMe.repository.EventRepository;
 
 import java.util.stream.Collectors;
 

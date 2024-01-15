@@ -2,7 +2,6 @@ package ru.practicum.exploreWithMe.service;
 
 import ru.practicum.exploreWithMe.dto.*;
 import ru.practicum.exploreWithMe.entity.EventState;
-import ru.practicum.exploreWithMe.entity.SortStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -3,15 +3,13 @@ package ru.practicum.exploreWithMe.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.practicum.exploreWithMe.dao.UserRepository;
 import ru.practicum.exploreWithMe.dto.UserDto;
 import ru.practicum.exploreWithMe.exception.NoDataFoundException;
 import ru.practicum.exploreWithMe.exception.RequestException;
 import ru.practicum.exploreWithMe.mapper.UserMapper;
+import ru.practicum.exploreWithMe.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,13 +34,11 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers(List<Integer> uid, Optional<Integer> from, Optional<Integer> size) {
+    public List<UserDto> getUsers(List<Integer> uid, Integer from, Integer size) {
         if (uid != null) {
-            return getUsersWithUidParam(uid);
-        } else if (from.isPresent() && size.isPresent()) {
-            return getUsersWithFromSizeParam(from, size);
+            return getUsersWithUid(uid, from, size);
         }
-        return new ArrayList<>();
+        return getUsersWithoutUid(from, size);
     }
 
     private void checkTheExistenceUser(int userId) {
@@ -50,16 +46,14 @@ public class UserServiceImp implements UserService {
                 + " was not found"));
     }
 
-    private List<UserDto> getUsersWithUidParam(List<Integer> uid) {
-        return userRepository.findAllUsers(uid).stream().map(e -> userMapper.convertToUserDto(e))
-                .collect(Collectors.toList());
+    private List<UserDto> getUsersWithUid(List<Integer> uid, Integer from, Integer size) {
+        return userRepository.findAllUsersWithUid(uid, PageRequest.of((int) Math.ceil((double) from / size), size))
+                .stream().map(e -> userMapper.convertToUserDto(e)).collect(Collectors.toList());
     }
 
-    private List<UserDto> getUsersWithFromSizeParam(Optional<Integer> from, Optional<Integer> size) {
-        return userRepository.findAllUsersWithPagination(PageRequest.of(
-                        (int) Math.ceil((double) from.get() / size.get()),
-                        size.get())).getContent().stream().map(e -> userMapper.convertToUserDto(e))
-                .collect(Collectors.toList());
+    private List<UserDto> getUsersWithoutUid(Integer from, Integer size) {
+        return userRepository.findAllUsersWithoutUid(PageRequest.of((int) Math.ceil((double) from / size), size))
+                .stream().map(e -> userMapper.convertToUserDto(e)).collect(Collectors.toList());
     }
 
     private void checkAvailableEmail(UserDto userDto) {

@@ -3,7 +3,6 @@ package ru.practicum.exploreWithMe.service;
 import ru.practicum.exploreWithMe.dto.CategoryDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoryService {
 
@@ -15,5 +14,5 @@ public interface CategoryService {
 
     CategoryDto getCategoryById(int categoryId);
 
-    List<CategoryDto> getCategories(Optional<Integer> from, Optional<Integer> size);
+    List<CategoryDto> getCategories(Integer from, Integer size);
 }

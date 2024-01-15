@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ErrorResponse {
+public class ErrorResponseMain {
     private StackTraceElement[] errors;
     private String message;
     private String reason;
@@ -14,7 +14,7 @@ public class ErrorResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
-    public ErrorResponse(StackTraceElement[] errors, String message, String reason, String status, LocalDateTime timestamp) {
+    public ErrorResponseMain(StackTraceElement[] errors, String message, String reason, String status, LocalDateTime timestamp) {
         this.errors = errors;
         this.message = message;
         this.reason = reason;
