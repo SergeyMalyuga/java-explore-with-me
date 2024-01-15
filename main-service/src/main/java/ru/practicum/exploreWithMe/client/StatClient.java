@@ -20,14 +20,14 @@ public class StatClient {
         List<HitStatsDto> viewsList = statClient.getStats(event.getCreatedOn(), LocalDateTime.now(), true,
                 List.of("/events/" + event.getId()));
         if (viewsList.isEmpty()) {
-            event.setViews(0);
+            event.setViews(0L);
         } else {
             int hitStatsIndex = 0;
-            /* event.setViews(viewsList.get(hitStatsIndex).getHits());*/
+             event.setViews(viewsList.get(hitStatsIndex).getHits());
         }
     }
 
     public void addEventView(String ip, String uri) {
-        statClient.postHit(new HitDto("ewm-main-service", uri, ip, LocalDateTime.now()));
+        statClient.postHit(new HitDto(null,"ewm-main-service", uri, ip, LocalDateTime.now()));
     }
 }

@@ -8,7 +8,6 @@ import ru.practicum.exploreWithMe.dao.*;
 import ru.practicum.exploreWithMe.dto.*;
 import ru.practicum.exploreWithMe.entity.*;
 import ru.practicum.exploreWithMe.exception.*;
-import ru.practicum.exploreWithMe.hit.dao.HitRepository;
 import ru.practicum.exploreWithMe.mapper.EventMapper;
 import ru.practicum.exploreWithMe.mapper.RequestMapper;
 
@@ -33,8 +32,7 @@ public class EventServiceImp implements EventService {
 
     @Autowired
     private CategoryRepository categoryRepository;
-    @Autowired
-    private HitRepository hitRepository;
+
     @Autowired
     private StatClient statClient;
 
@@ -121,11 +119,12 @@ public class EventServiceImp implements EventService {
     @Override
     public EventFullDto getEventByIdPublic(int eventId, String ip, String uri) {
         Event event = checkTheExistenceEvent(eventId);
-        statClient.setEventView(event);
+
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new AccessErrorException("Event state must be published.");
         }
         statClient.addEventView(ip, uri);
+        statClient.setEventView(event);
         return eventMapper.convertToEventFullDto(event);
     }
 

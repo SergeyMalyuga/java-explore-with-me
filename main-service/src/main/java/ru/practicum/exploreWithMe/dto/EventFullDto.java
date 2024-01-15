@@ -38,6 +38,6 @@ public class EventFullDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
     private EventState state;
-    private int views;
+    private Long views;
 }
 

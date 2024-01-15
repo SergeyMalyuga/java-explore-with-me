@@ -20,9 +20,8 @@ public class HitServiceImp implements HitService {
     HitMapper hitMapper;
 
     @Override
-    public String postHit(HitDto hitDto) {
+    public void postHit(HitDto hitDto) {
         hitRepository.save(hitMapper.convertToHit(hitDto));
-        return "Информация сохранена";
     }
 
     @Override

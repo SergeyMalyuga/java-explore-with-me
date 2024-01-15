@@ -36,7 +36,7 @@ public class StatisticsClient {
 
     public void postHit(HitDto hitDto) {
         rest.exchange("/hit", HttpMethod.POST, new HttpEntity<>(hitDto, defaultHeaders()), Object.class)
-                .getStatusCode();
+                .getStatusCodeValue();
     }
 
     public List<HitStatsDto> getStats(LocalDateTime start, LocalDateTime end, Boolean isUnique, List<String> uris) {
