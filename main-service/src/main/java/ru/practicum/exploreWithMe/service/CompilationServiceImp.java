@@ -1,6 +1,6 @@
 package ru.practicum.exploreWithMe.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.dto.CompilationDto;
@@ -17,14 +17,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CompilationServiceImp implements CompilationService {
 
-    @Autowired
-    private CompilationRepository compilationRepository;
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private CompilationMapper compilationMapper;
+    private final CompilationRepository compilationRepository;
+    private final EventRepository eventRepository;
+    private final CompilationMapper compilationMapper;
 
     @Override
     public CompilationDto addCompilation(NewCompilationDto newCompilation) {
@@ -54,12 +52,7 @@ public class CompilationServiceImp implements CompilationService {
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
-        if (pinned == null) {
-            return compilationRepository.findByAllPagination(PageRequest.of((int)
-                    Math.ceil((double) from / size), size)).stream().map(e -> compilationMapper
-                    .convertToCompilationDto(e)).collect(Collectors.toList());
-        }
-        return compilationRepository.findByPinned(pinned, PageRequest.of((int)
+        return compilationRepository.findByAllPagination(pinned, PageRequest.of((int)
                 Math.ceil((double) from / size), size)).stream().map(e -> compilationMapper
                 .convertToCompilationDto(e)).collect(Collectors.toList());
     }

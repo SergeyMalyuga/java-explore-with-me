@@ -10,10 +10,7 @@ import java.util.List;
 
 public interface CompilationRepository extends JpaRepository<Compilation, Integer> {
 
-    @Query(value = "SELECT c FROM Compilation AS c WHERE c.pinned = :pinned")
-    public List<Compilation> findByPinned(@Param("pinned") Boolean pinned, Pageable pageable);
-
-    @Query(value = "SELECT c FROM Compilation AS c")
-    public List<Compilation> findByAllPagination(Pageable pageable);
+    @Query(value = "SELECT c FROM Compilation AS c WHERE (:pinned IS NULL OR c.pinned = :pinned)")
+    List<Compilation> findByAllPagination(@Param("pinned") Boolean pinned, Pageable pageable);
 
 }

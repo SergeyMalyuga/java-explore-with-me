@@ -6,9 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ru.practicum.exploreWithMe.entity.Category;
 import ru.practicum.exploreWithMe.entity.EventState;
-import ru.practicum.exploreWithMe.entity.Location;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,14 +19,13 @@ import java.util.List;
 @AllArgsConstructor
 public class EventFullDto {
 
-
     private int id;
     private String annotation;
-    private Category category;
+    private CategoryDto category;
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
-    private Location location;
+    private LocationDto location;
     private boolean paid;
     private int participantLimit;
     private Boolean requestModeration;

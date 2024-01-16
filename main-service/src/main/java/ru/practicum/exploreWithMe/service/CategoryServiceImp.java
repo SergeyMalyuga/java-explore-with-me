@@ -1,6 +1,6 @@
 package ru.practicum.exploreWithMe.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.dto.CategoryDto;
@@ -15,16 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImp implements CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private CategoryMapper categoryMapper;
+    private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
+    private final CategoryMapper categoryMapper;
 
     @Override
     public CategoryDto addCategory(CategoryDto categoryDto) {
@@ -67,7 +63,7 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     private List<CategoryDto> getCategoriesWithFromSizeParam(Integer from, Integer size) {
-        return categoryRepository.findAllCategoriesWithPagination(PageRequest.of(
+        return categoryRepository.findAll(PageRequest.of(
                         (int) Math.ceil((double) from / size), size)).getContent().stream()
                 .map(e -> categoryMapper.convertToCategoryDto(e)).collect(Collectors.toList());
     }
