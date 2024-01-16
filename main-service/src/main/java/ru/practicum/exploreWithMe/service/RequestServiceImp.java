@@ -1,8 +1,7 @@
 package ru.practicum.exploreWithMe.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.exploreWithMe.dto.ParticipationRequestDto;
 import ru.practicum.exploreWithMe.dto.ResponseRequestDto;
 import ru.practicum.exploreWithMe.entity.*;
 import ru.practicum.exploreWithMe.exception.NoDataFoundException;
@@ -17,26 +16,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class RequestServiceImp implements RequestService {
 
-    @Autowired
-    private RequestRepository requestRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private RequestMapper requestMapper;
+    private final RequestRepository requestRepository;
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final RequestMapper requestMapper;
 
     @Override
     public ResponseRequestDto addRequest(int userId, int eventId) {
-        ParticipationRequestDto requestDto = createRequestDto(userId, eventId);
+        ParticipationRequest request = createRequest(userId, eventId);
         checkValidRequestAdd(userId, eventId);
-        changeRequestStatus(eventId, requestDto);
-        return addRequestToDataBase(requestDto);
+        changeRequestStatus(eventId, request);
+        return addRequestToDataBase(request);
 
     }
 
@@ -99,23 +92,23 @@ public class RequestServiceImp implements RequestService {
         return request;
     }
 
-    private void changeRequestStatus(int eventId, ParticipationRequestDto requestDto) {
+    private void changeRequestStatus(int eventId, ParticipationRequest request) {
         Event event = checkTheExistenceEvent(eventId);
         if (event.getRequestModeration().equals(false) || event.getParticipantLimit() == 0) {
-            requestDto.setRequestStatus(RequestStatus.CONFIRMED);
+            request.setRequestStatus(RequestStatus.CONFIRMED);
         }
     }
 
-    private ParticipationRequestDto createRequestDto(int userId, int eventId) {
+    private ParticipationRequest createRequest(int userId, int eventId) {
         Event event = checkTheExistenceEvent(eventId);
         User user = checkTheExistenceUser(userId);
-        return new ParticipationRequestDto().setRequester(user).setEvent(event)
-                .setCreated(LocalDateTime.now()).setRequestStatus(RequestStatus.PENDING);
+        return new ParticipationRequest().setRequester(user).setEvent(event).setCreated(LocalDateTime.now())
+                .setRequestStatus(RequestStatus.PENDING);
     }
 
-    private ResponseRequestDto addRequestToDataBase(ParticipationRequestDto requestDto) {
+    private ResponseRequestDto addRequestToDataBase(ParticipationRequest request) {
         return requestMapper.convertToResponseRequest(requestRepository
-                .save(requestMapper.convertToRequest(requestDto)));
+                .save(request));
     }
 
     private ResponseRequestDto changeStatusAndAddToDataBase(ParticipationRequest request) {

@@ -6,9 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ru.practicum.exploreWithMe.entity.Event;
 import ru.practicum.exploreWithMe.entity.RequestStatus;
-import ru.practicum.exploreWithMe.entity.User;
 
 import java.time.LocalDateTime;
 
@@ -19,11 +17,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ParticipationRequestDto {
 
-
     private int id;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created;
-    private Event event;
-    private User requester;
+    private EventFullDto event;
+    private UserDto requester;
     private RequestStatus requestStatus;
 }

@@ -1,6 +1,6 @@
 package ru.practicum.exploreWithMe.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.exploreWithMe.dto.EventFullDto;
 import ru.practicum.exploreWithMe.dto.EventShortDto;
@@ -11,22 +11,24 @@ import ru.practicum.exploreWithMe.entity.EventState;
 import java.time.LocalDateTime;
 
 @Component
+@RequiredArgsConstructor
 public class EventMapper {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+    private final CategoryMapper categoryMapper;
+    private final LocationMapper locationMapper;
 
     public EventFullDto convertToEventFullDto(Event event) {
         return new EventFullDto().setEventDate(event.getEventDate())
                 .setAnnotation(event.getAnnotation())
                 .setId(event.getId())
-                .setCategory(event.getCategory())
+                .setCategory(categoryMapper.convertToCategoryDto(event.getCategory()))
                 .setCreatedOn(event.getCreatedOn())
                 .setInitiator(userMapper.convertToUserShortDto(event.getInitiator()))
                 .setDescription(event.getDescription())
                 .setPaid(event.isPaid())
                 .setConfirmedRequests(event.getConfirmedRequests())
-                .setLocation(event.getLocation())
+                .setLocation(locationMapper.convertToLocationDto(event.getLocation()))
                 .setParticipantLimit(event.getParticipantLimit())
                 .setPublishedOn(event.getPublishedOn())
                 .setRequestModeration(event.getRequestModeration())
@@ -56,13 +58,12 @@ public class EventMapper {
     public EventShortDto convertToEventShortDto(Event event) {
         return new EventShortDto().setId(event.getId())
                 .setAnnotation(event.getAnnotation())
-                .setCategory(event.getCategory())
+                .setCategory(categoryMapper.convertToCategoryDto(event.getCategory()))
                 .setConfirmedRequests(event.getConfirmedRequests())
                 .setEventDate(event.getEventDate())
                 .setInitiator(userMapper.convertToUserShortDto(event.getInitiator()))
                 .setPaid(event.isPaid())
                 .setTitle(event.getTitle())
                 .setViews(event.getViews());
-
     }
 }

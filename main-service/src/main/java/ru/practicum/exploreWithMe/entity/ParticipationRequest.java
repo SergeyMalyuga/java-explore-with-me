@@ -24,10 +24,10 @@ public class ParticipationRequest {
     private int id;
     @Column(name = "created")
     private LocalDateTime created;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id")
     private User requester;
     @Enumerated(EnumType.STRING)

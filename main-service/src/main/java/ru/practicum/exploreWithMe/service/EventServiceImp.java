@@ -1,6 +1,6 @@
 package ru.practicum.exploreWithMe.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.client.StatClient;
@@ -17,31 +17,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EventServiceImp implements EventService {
 
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RequestRepository requestRepository;
-
-    @Autowired
-    private LocationRepository locationRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private StatClient statClient;
-
-    @Autowired
-    EventMapper eventMapper;
-
-    @Autowired
-    RequestMapper requestMapper;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
+    private final RequestRepository requestRepository;
+    private final LocationRepository locationRepository;
+    private final CategoryRepository categoryRepository;
+    private final StatClient statClient;
+    private final EventMapper eventMapper;
+    private final RequestMapper requestMapper;
 
     @Override
     public EventFullDto addEvent(NewEventDto newEventDto, int userId) {

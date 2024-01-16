@@ -1,6 +1,6 @@
 package ru.practicum.exploreWithMe.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.dto.UserDto;
@@ -13,13 +13,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImp implements UserService {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserDto addUser(UserDto userDto) {
@@ -35,10 +33,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public List<UserDto> getUsers(List<Integer> uid, Integer from, Integer size) {
-        if (uid != null) {
-            return getUsersWithUid(uid, from, size);
-        }
-        return getUsersWithoutUid(from, size);
+        return getUsersWithPagination(uid, from, size);
     }
 
     private void checkTheExistenceUser(int userId) {
@@ -46,14 +41,9 @@ public class UserServiceImp implements UserService {
                 + " was not found"));
     }
 
-    private List<UserDto> getUsersWithUid(List<Integer> uid, Integer from, Integer size) {
-        return userRepository.findAllUsersWithUid(uid, PageRequest.of((int) Math.ceil((double) from / size), size))
-                .stream().map(e -> userMapper.convertToUserDto(e)).collect(Collectors.toList());
-    }
-
-    private List<UserDto> getUsersWithoutUid(Integer from, Integer size) {
-        return userRepository.findAllUsersWithoutUid(PageRequest.of((int) Math.ceil((double) from / size), size))
-                .stream().map(e -> userMapper.convertToUserDto(e)).collect(Collectors.toList());
+    private List<UserDto> getUsersWithPagination(List<Integer> uid, Integer from, Integer size) {
+        return userRepository.findAllUsersWithPagination(uid, PageRequest.of((int) Math.ceil((double) from / size),
+                size)).stream().map(e -> userMapper.convertToUserDto(e)).collect(Collectors.toList());
     }
 
     private void checkAvailableEmail(UserDto userDto) {
