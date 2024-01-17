@@ -15,7 +15,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class NewCommentDto {
 
+    @NotNull(groups = {Marker.OnUpdate.class, Marker.OnCreate.class})
     private String text;
-    @NotNull
+    @NotNull(groups = Marker.OnCreate.class)
     private Integer event;
 }

@@ -13,12 +13,16 @@ public class CommentMapper {
     private EventMapper eventMapper;
 
     public CommentDto convertToCommentDto(Comment comment) {
-        return new CommentDto().setId(comment.getId())
+        CommentDto commentDto = new CommentDto().setId(comment.getId())
                 .setText(comment.getText())
                 .setUser(userMapper.convertToUserDto(comment.getUser()))
                 .setEvent(eventMapper.convertToEventShortDto(comment.getEvent()))
                 .setCreatedOn(comment.getCreatedOn())
                 .setStatus(comment.getStatus());
-    }
 
+        if (comment.getStatus() != null) {
+            commentDto.setPublishedOn(comment.getPublishedOn());
+        }
+        return commentDto;
+    }
 }

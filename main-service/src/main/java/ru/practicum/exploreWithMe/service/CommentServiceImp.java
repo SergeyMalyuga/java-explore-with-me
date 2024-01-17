@@ -1,9 +1,12 @@
 package ru.practicum.exploreWithMe.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.dto.CommentDto;
+import ru.practicum.exploreWithMe.dto.CommentStatusAdmin;
 import ru.practicum.exploreWithMe.dto.NewCommentDto;
+import ru.practicum.exploreWithMe.dto.UpdateCommentAdminRequest;
 import ru.practicum.exploreWithMe.entity.Comment;
 import ru.practicum.exploreWithMe.entity.CommentStatus;
 import ru.practicum.exploreWithMe.entity.Event;
@@ -17,18 +20,17 @@ import ru.practicum.exploreWithMe.repository.EventRepository;
 import ru.practicum.exploreWithMe.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CommentServiceImp implements CommentService {
 
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final CommentMapper commentMapper;
 
     @Override
     public CommentDto addComment(int userId, NewCommentDto newCommentDto) {
@@ -37,25 +39,57 @@ public class CommentServiceImp implements CommentService {
     }
 
     @Override
-    public void removeCommentPrivate(int userId, int commentId) {
-        checkTheExistenceComment(commentId);
-        checkTheExistenceUser(userId);
-        checkIsUserOwnerByComment(userId, commentId);
-        commentRepository.deleteById(commentId);
+    public List<CommentDto> getAllCommentsPrivate(int userId, Integer from, Integer size) {
+        User user = checkTheExistenceUser(userId);
+        return commentRepository.findAllByUser(user, PageRequest.of((int) Math.ceil((double) from / size),
+                size)).stream().map(e -> commentMapper.convertToCommentDto(e)).collect(Collectors.toList());
     }
 
     @Override
-    public CommentDto updateCommentPrivate(int userId, int commentId, CommentDto newCommentDto) {
+    public CommentDto updateCommentPrivate(int userId, int commentId, NewCommentDto newCommentDto) {
         Comment comment = checkTheExistenceComment(commentId);
         checkTheExistenceUser(userId);
         checkIsUserOwnerByComment(userId, commentId);
         if (newCommentDto.getText() != null) {
             comment.setText(newCommentDto.getText());
-        }
-        if (newCommentDto.getStatus() != null) {
-            comment.setStatus(newCommentDto.getStatus());
+            comment.setStatus(CommentStatus.PENDING);
         }
         return commentMapper.convertToCommentDto(commentRepository.save(comment));
+    }
+
+    @Override
+    public CommentDto updateCommentAdmin(int commentId, UpdateCommentAdminRequest updateCommentDto) {
+        Comment comment = checkValidCommentForUpdateAdmin(commentId);
+        updateCommentFieldAdmin(updateCommentDto, comment);
+        return commentMapper.convertToCommentDto(commentRepository.save(comment));
+    }
+
+    @Override
+    public void removeCommentAdmin(int commentId) {
+        commentRepository.deleteById(commentId);
+    }
+
+    @Override
+    public List<CommentDto> findAllCommentsAdmin(List<Integer> commentIdList, List<Integer> eventIdList,
+                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from,
+                                                 Integer size) {
+        return commentRepository.findCommentsByAdmin(commentIdList, eventIdList, rangeStart, rangeEnd,
+                        PageRequest.of((int) Math.ceil((double) from / size), size)).stream()
+                .map(e -> commentMapper.convertToCommentDto(e)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentDto> findAllCommentsPublic(Integer from, Integer size) {
+        return commentRepository.findAll(PageRequest.of((int) Math.ceil((double) from / size), size)).stream()
+                .map(e -> commentMapper.convertToCommentDto(e)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentDto> findAllCommentsByEvent(int eventId, Integer from, Integer size) {
+        Event event = checkTheExistenceEvent(eventId);
+        return commentRepository.findCommentsByEvent(event, PageRequest.of((int) Math.ceil((double) from / size), size))
+                .stream().map(e -> commentMapper.convertToCommentDto(e)).collect(Collectors.toList());
+
     }
 
     private User checkTheExistenceUser(int userId) {
@@ -100,5 +134,30 @@ public class CommentServiceImp implements CommentService {
         return new Comment().setUser(user).setEvent(event).setStatus(CommentStatus.PENDING)
                 .setCreatedOn(LocalDateTime.now()).setText(newCommentDto.getText());
 
+    }
+
+    private CommentStatus convertToCommentStatus(CommentStatusAdmin commentStatusAdmin) {
+        if (commentStatusAdmin.equals(CommentStatusAdmin.CONFIRMED)) {
+            return CommentStatus.PUBLISHED;
+        }
+        return CommentStatus.CANCELED;
+    }
+
+    private Comment checkValidCommentForUpdateAdmin(int commentId) {
+        Comment comment = checkTheExistenceComment(commentId);
+        if (!comment.getStatus().equals(CommentStatus.PENDING)) {
+            throw new CommentAddException("You can only change comments with status \"PENDING\"");
+        }
+        return comment;
+    }
+
+    private void updateCommentFieldAdmin(UpdateCommentAdminRequest updateCommentDto, Comment comment) {
+        if (updateCommentDto.getText() != null) {
+            comment.setText(updateCommentDto.getText());
+        }
+        if (updateCommentDto.getStatus().equals(CommentStatusAdmin.CONFIRMED)) {
+            comment.setPublishedOn(LocalDateTime.now());
+        }
+        comment.setStatus(convertToCommentStatus(updateCommentDto.getStatus()));
     }
 }

@@ -59,6 +59,14 @@ public class ErrorHandlerMain {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponseMain commentUpdateError(CommentUpdateException e) {
+        return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
+                "Duplicate.",
+                HttpStatus.CONFLICT.toString(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseMain notBlankError(ConstraintViolationException e) {
         return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
