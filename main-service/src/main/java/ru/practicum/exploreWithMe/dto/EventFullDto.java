@@ -11,6 +11,8 @@ import ru.practicum.exploreWithMe.entity.EventState;
 import ru.practicum.exploreWithMe.entity.Location;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter

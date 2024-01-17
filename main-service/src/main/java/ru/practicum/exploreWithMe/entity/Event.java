@@ -8,6 +8,7 @@ import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "events")
@@ -52,6 +53,8 @@ public class Event {
     private LocalDateTime publishedOn;
     @Enumerated(EnumType.STRING)
     private EventState state;
+    @OneToMany(mappedBy = "event")
+    private List<Comment> commentsList;
     @Transient
     private Long views;
 }
