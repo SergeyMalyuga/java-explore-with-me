@@ -20,9 +20,8 @@ public class HitServiceImp implements HitService {
     HitMapper hitMapper;
 
     @Override
-    public String postHit(HitDto hitDto) {
+    public void postHit(HitDto hitDto) {
         hitRepository.save(hitMapper.convertToHit(hitDto));
-        return "Информация сохранена";
     }
 
     @Override
@@ -37,7 +36,9 @@ public class HitServiceImp implements HitService {
 
     private void checkValidityDate(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
-            throw new InvalidDataException("Start не может быть после end");
+            throw new InvalidDataException("Start can`t be after end.");
+        } else if (start == null || end == null) {
+            throw new InvalidDataException("Start or end can`t be null.");
         }
     }
 

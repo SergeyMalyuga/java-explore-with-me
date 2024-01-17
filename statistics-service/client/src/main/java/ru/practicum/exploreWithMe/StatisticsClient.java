@@ -1,5 +1,6 @@
-package ru.practicum.exploreWithMe.client;
+package ru.practicum.exploreWithMe;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -11,8 +12,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.exploreWithMe.HitDto;
-import ru.practicum.exploreWithMe.HitStatsDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,9 +20,11 @@ import java.util.Map;
 
 @Component
 public class StatisticsClient {
+
     private final RestTemplate rest;
 
 
+    @Autowired
     public StatisticsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
         rest = builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
@@ -33,7 +34,7 @@ public class StatisticsClient {
 
     public void postHit(HitDto hitDto) {
         rest.exchange("/hit", HttpMethod.POST, new HttpEntity<>(hitDto, defaultHeaders()), Object.class)
-                .getStatusCode();
+                .getStatusCodeValue();
     }
 
     public List<HitStatsDto> getStats(LocalDateTime start, LocalDateTime end, Boolean isUnique, List<String> uris) {

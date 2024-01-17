@@ -8,7 +8,6 @@ import ru.practicum.exploreWithMe.HitDto;
 import ru.practicum.exploreWithMe.HitStatsDto;
 import ru.practicum.exploreWithMe.hit.service.HitService;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,8 +19,8 @@ public class HitController {
 
     @PostMapping("/hit")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public String postHit(@Valid @RequestBody HitDto hitDto) {
-        return hitService.postHit(hitDto);
+    public void postHit(@RequestBody HitDto hitDto) {
+        hitService.postHit(hitDto);
     }
 
     @GetMapping("/stats")

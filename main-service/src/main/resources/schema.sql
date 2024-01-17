@@ -1,0 +1,60 @@
+DROP TABLE IF EXISTS compilation_events, compilations, requests, users, events, categories, locations;
+
+CREATE TABLE IF NOT EXISTS users(
+id INTEGER GENERATED ALWAYS AS IDENTITY,
+name VARCHAR(250) NOT NULL,
+email VARCHAR(254) NOT NULL,
+CONSTRAINT user_id PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS categories(
+id	INTEGER GENERATED ALWAYS AS IDENTITY,
+name VARCHAR(50) NOT NULL,
+CONSTRAINT category_id PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS locations(
+id INTEGER GENERATED ALWAYS AS IDENTITY,
+lat REAL NOT NULL,
+lon REAL NOT NULL,
+CONSTRAINT location_id PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS events(
+id INTEGER GENERATED ALWAYS AS IDENTITY,
+annotation VARCHAR(2000) NOT NULL,
+category_id INTEGER NOT NULL REFERENCES categories(id),
+description VARCHAR(7000),
+event_date TIMESTAMP WITHOUT TIME ZONE  NOT NULL ,
+location_id INTEGER  NOT NULL  REFERENCES locations(id),
+paid BOOLEAN  NOT NULL ,
+participant_limit INTEGER DEFAULT 0,
+request_moderation BOOLEAN,
+title VARCHAR(120)  NOT NULL,
+created_on TIMESTAMP WITHOUT TIME ZONE,
+initiator_id INTEGER NOT NULL  REFERENCES users(id),
+published_on TIMESTAMP WITHOUT TIME ZONE,
+state VARCHAR(10),
+CONSTRAINT events_id PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS requests(
+id INTEGER GENERATED ALWAYS AS IDENTITY,
+requester_id INTEGER REFERENCES users(id),
+event_id INTEGER REFERENCES events(id),
+request_status Varchar(20),
+created TIMESTAMP WITHOUT TIME ZONE,
+CONSTRAINT requests_id PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS compilations(
+id INTEGER GENERATED ALWAYS AS IDENTITY,
+pinned BOOLEAN,
+title VARCHAR(50),
+CONSTRAINT compilations_id PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS compilation_events(
+compilation_id INTEGER REFERENCES compilations(id),
+event_id INTEGER REFERENCES events(id)
+);
