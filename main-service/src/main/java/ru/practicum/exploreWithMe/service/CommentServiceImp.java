@@ -13,6 +13,7 @@ import ru.practicum.exploreWithMe.entity.Event;
 import ru.practicum.exploreWithMe.entity.User;
 import ru.practicum.exploreWithMe.exception.AccessErrorException;
 import ru.practicum.exploreWithMe.exception.CommentAddException;
+import ru.practicum.exploreWithMe.exception.CommentDeleteException;
 import ru.practicum.exploreWithMe.exception.NoDataFoundException;
 import ru.practicum.exploreWithMe.mapper.CommentMapper;
 import ru.practicum.exploreWithMe.repository.CommentRepository;
@@ -65,27 +66,44 @@ public class CommentServiceImp implements CommentService {
     }
 
     @Override
+    public CommentDto getById(int commentId) {
+        checkTheExistenceComment(commentId);
+        return commentMapper.convertToCommentDto(commentRepository.findById(commentId).get());
+    }
+
+    @Override
     public void removeCommentAdmin(int commentId) {
+        checkTheExistenceComment(commentId);
         commentRepository.deleteById(commentId);
     }
 
     @Override
-    public List<CommentDto> findAllCommentsAdmin(List<Integer> commentIdList, List<Integer> eventIdList,
-                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from,
-                                                 Integer size) {
+    public void removeCommentUser(int userId, int commentId) {
+        Comment comment = checkTheExistenceComment(commentId);
+        checkIsUserOwnerByComment(userId, commentId);
+        if (!comment.getStatus().equals(CommentStatus.PENDING)) {
+            throw new CommentDeleteException("You are not the creator of the comment.");
+        }
+        commentRepository.deleteById(commentId);
+    }
+
+    @Override
+    public List<CommentDto> getAllCommentsAdmin(List<Integer> commentIdList, List<Integer> eventIdList,
+                                                LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from,
+                                                Integer size) {
         return commentRepository.findCommentsByAdmin(commentIdList, eventIdList, rangeStart, rangeEnd,
                         PageRequest.of((int) Math.ceil((double) from / size), size)).stream()
                 .map(e -> commentMapper.convertToCommentDto(e)).collect(Collectors.toList());
     }
 
     @Override
-    public List<CommentDto> findAllCommentsPublic(Integer from, Integer size) {
+    public List<CommentDto> getAllCommentsPublic(Integer from, Integer size) {
         return commentRepository.findAll(PageRequest.of((int) Math.ceil((double) from / size), size)).stream()
                 .map(e -> commentMapper.convertToCommentDto(e)).collect(Collectors.toList());
     }
 
     @Override
-    public List<CommentDto> findAllCommentsByEvent(int eventId, Integer from, Integer size) {
+    public List<CommentDto> getAllCommentsByEvent(int eventId, Integer from, Integer size) {
         Event event = checkTheExistenceEvent(eventId);
         return commentRepository.findCommentsByEvent(event, PageRequest.of((int) Math.ceil((double) from / size), size))
                 .stream().map(e -> commentMapper.convertToCommentDto(e)).collect(Collectors.toList());

@@ -9,8 +9,6 @@ import lombok.experimental.Accessors;
 import ru.practicum.exploreWithMe.entity.EventState;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter

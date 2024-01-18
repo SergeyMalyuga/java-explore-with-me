@@ -13,17 +13,21 @@ public interface CommentService {
 
     void removeCommentAdmin(int commentId);
 
+    void removeCommentUser(int userId, int commentId);
+
     List<CommentDto> getAllCommentsPrivate(int userId, Integer from, Integer size);
 
     CommentDto updateCommentPrivate(int userId, int commentId, NewCommentDto updateCommentDto);
 
     CommentDto updateCommentAdmin(int commentId, UpdateCommentAdminRequest updateCommentDto);
 
-    List<CommentDto> findAllCommentsAdmin(List<Integer> commentIdList, List<Integer> eventId, LocalDateTime rangeStart,
-                                          LocalDateTime rangeEnd, Integer from, Integer size);
+    CommentDto getById(int commentId);
 
-    List<CommentDto> findAllCommentsPublic(Integer from, Integer size);
+    List<CommentDto> getAllCommentsAdmin(List<Integer> commentIdList, List<Integer> eventId, LocalDateTime rangeStart,
+                                         LocalDateTime rangeEnd, Integer from, Integer size);
 
-    List<CommentDto> findAllCommentsByEvent(int eventId, Integer from, Integer size);
+    List<CommentDto> getAllCommentsPublic(Integer from, Integer size);
+
+    List<CommentDto> getAllCommentsByEvent(int eventId, Integer from, Integer size);
 
 }

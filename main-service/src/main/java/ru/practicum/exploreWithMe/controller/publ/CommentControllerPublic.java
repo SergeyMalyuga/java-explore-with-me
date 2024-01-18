@@ -17,13 +17,13 @@ public class CommentControllerPublic {
     @GetMapping
     public List<CommentDto> getComments(@RequestParam(name = "from", defaultValue = "0") Integer from,
                                         @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        return commentService.findAllCommentsPublic(from, size);
+        return commentService.getAllCommentsPublic(from, size);
     }
 
     @GetMapping("/{evenId}")
     public List<CommentDto> getCommentByEven(@PathVariable(name = "evenId") int evenId,
                                              @RequestParam(name = "from", defaultValue = "0") Integer from,
                                              @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        return commentService.findAllCommentsByEvent(evenId, from, size);
+        return commentService.getAllCommentsByEvent(evenId, from, size);
     }
 }

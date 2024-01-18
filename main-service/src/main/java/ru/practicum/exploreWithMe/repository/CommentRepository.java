@@ -18,6 +18,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     Comment findByUserEvent(@Param("userId") int userId, @Param("eventId") int eventId);
 
     List<Comment> findCommentsByEvent(Event event, Pageable pageable);
+
     Page<Comment> findAll(Pageable pageable);
 
     List<Comment> findAllByUser(User user, Pageable pageable);

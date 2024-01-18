@@ -40,6 +40,11 @@ public class CommentControllerAdmin {
                                         @RequestParam(name = "rangeEnd", required = false) LocalDateTime rangeEnd,
                                         @RequestParam(name = "from", defaultValue = "0") Integer from,
                                         @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        return commentService.findAllCommentsAdmin(userIds, eventIds, rangeStart, rangeEnd, from, size);
+        return commentService.getAllCommentsAdmin(userIds, eventIds, rangeStart, rangeEnd, from, size);
+    }
+
+    @GetMapping("/{commentId}")
+    public CommentDto getCommentByyId(@PathVariable(name = "commentId") int commentId) {
+        return commentService.getById(commentId);
     }
 }

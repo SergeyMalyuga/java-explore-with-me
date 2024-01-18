@@ -60,6 +60,14 @@ public class ErrorHandlerMain {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponseMain commentDeleteError(CommentDeleteException e) {
+        return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
+                "Delete error.",
+                HttpStatus.CONFLICT.toString(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponseMain commentUpdateError(CommentUpdateException e) {
         return new ErrorResponseMain(e.getStackTrace(), e.getMessage(),
                 "Duplicate.",

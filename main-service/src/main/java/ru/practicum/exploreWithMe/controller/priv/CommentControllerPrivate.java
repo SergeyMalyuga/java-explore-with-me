@@ -38,11 +38,23 @@ public class CommentControllerPrivate {
         return commentService.getAllCommentsPrivate(userId, from, size);
     }
 
+    @GetMapping("/{commentId}")
+    public CommentDto getCommentByyId(@PathVariable(name = "commentId") int commentId) {
+        return commentService.getById(commentId);
+    }
+
     @PatchMapping("/{commentId}")
     @Validated(Marker.OnUpdate.class)
     public CommentDto patchComment(@PathVariable(name = "userId") int userId,
                                    @PathVariable(name = "commentId") int commentId,
                                    @Valid @RequestBody NewCommentDto updateCommentDto) {
         return commentService.updateCommentPrivate(userId, commentId, updateCommentDto);
+    }
+
+    @DeleteMapping("/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable(name = "userId") int userId,
+                           @PathVariable(name = "commentId") int commentId) {
+        commentService.removeCommentUser(userId, commentId);
     }
 }
