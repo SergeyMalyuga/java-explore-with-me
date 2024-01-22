@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS compilation_events, compilations, requests, users, events, categories, locations;
+DROP TABLE IF EXISTS comments, compilation_events, compilations, requests, users, events, categories, locations;
 
 CREATE TABLE IF NOT EXISTS users(
 id INTEGER GENERATED ALWAYS AS IDENTITY,
@@ -57,4 +57,15 @@ CONSTRAINT compilations_id PRIMARY KEY(id)
 CREATE TABLE IF NOT EXISTS compilation_events(
 compilation_id INTEGER REFERENCES compilations(id),
 event_id INTEGER REFERENCES events(id)
+);
+
+CREATE TABLE IF NOT EXISTS comments(
+id INTEGER GENERATED ALWAYS AS IDENTITY,
+text VARCHAR(5000) NOT NULL,
+user_id INTEGER NOT NULL REFERENCES users(id),
+event_id INTEGER NOT NULL REFERENCES events(id),
+status VARCHAR(10),
+published_on TIMESTAMP WITHOUT TIME ZONE,
+created_on TIMESTAMP WITHOUT TIME ZONE,
+CONSTRAINT comment_id PRIMARY KEY(id)
 );

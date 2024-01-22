@@ -8,6 +8,7 @@ import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "events")
@@ -23,14 +24,14 @@ public class Event {
     private int id;
     @Column(name = "annotation", nullable = false)
     private String annotation;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
     @Column(name = "description")
     private String description;
     @Column(name = "event_date", nullable = false)
     private LocalDateTime eventDate;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
     @Column(name = "paid", nullable = false)
@@ -45,13 +46,15 @@ public class Event {
     private int confirmedRequests;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id", nullable = false)
     private User initiator;
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
     @Enumerated(EnumType.STRING)
     private EventState state;
+    @OneToMany(mappedBy = "event")
+    private List<Comment> commentsList;
     @Transient
     private Long views;
 }
